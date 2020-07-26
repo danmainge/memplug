@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "739017183257",
+    "firebase_url": "https://meme-plug.firebaseio.com",
+    "project_id": "meme-plug",
+    "storage_bucket": "meme-plug.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739017183257:android:8a3ab9bb9b3ad932811a88",
+        "android_client_info": {
+          "package_name": "com.danmainge.memeplug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739017183257-tcugr3pb1k8ufan9ehk4733aigk4bcgl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danmainge.memeplug",
+            "certificate_hash": "86029caf0163911ce6bb4279162cc5af5ee58215"
+          }
+        },
+        {
+          "client_id": "739017183257-b3b4qcj9ob2fed00hc707d9sgrltjodr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABZV7oLBllvZ26b-JuAIEe-JEbkhclIp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739017183257-b3b4qcj9ob2fed00hc707d9sgrltjodr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
