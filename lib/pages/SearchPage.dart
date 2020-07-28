@@ -38,16 +38,23 @@ class _SearchPageState extends State<SearchPage>
         decoration: InputDecoration(
           fillColor: Colors.white.withOpacity(0.4),
           filled: true,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
           hintText: 'Look for friends',
           hintStyle: TextStyle(color: Colors.white),
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           prefixIcon: Icon(Feather.search, color: Colors.white),
           prefixIconConstraints: BoxConstraints(minHeight: 32, minWidth: 32),
           suffix: IconButton(
             constraints: BoxConstraints(minHeight: 32, minWidth: 32),
             icon: Icon(Icons.clear, color: Colors.white),
             onPressed: emptyTextFormField,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.0),
+            borderSide: BorderSide(
+              width: 0,
+              style: BorderStyle.none,
+            ),
           ),
         ),
         onFieldSubmitted: controlSearching,
@@ -59,24 +66,30 @@ class _SearchPageState extends State<SearchPage>
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Container(
       child: Center(
-          child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          Icon(
-            Icons.group,
-            color: Colors.grey,
-            size: 200,
-          ),
-          Text(
-            'users',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 50.0),
-          )
-        ],
-      )),
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            // Image.asset(
+            //   'assets/images/playstore.png',
+            //   height: 200,
+            //   width: 200,
+            // ),
+            Icon(
+              Icons.group,
+              color: Colors.grey,
+              size: 200.0,
+            ),
+            Text(
+              'users',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 50.0),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -86,9 +99,31 @@ class _SearchPageState extends State<SearchPage>
         builder: (context, dataSnapshot) {
           if (!dataSnapshot.hasData) {
             return circularProgress();
+            Center(
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/playstore.jpg',
+                    height: 200,
+                    width: 200,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'user not found',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 50.0),
+                  )
+                ],
+              ),
+            );
           }
           List<UserResult> searchUsersResult = [];
-          dataSnapshot.data.documents.fromEach((document) {
+          dataSnapshot.data.documents.forEach((document) {
             User eachUser = User.fromDocument(document);
             UserResult userResult = UserResult(eachUser);
             searchUsersResult.add(userResult);
@@ -111,6 +146,13 @@ class _SearchPageState extends State<SearchPage>
 class UserResult extends StatelessWidget {
   final User eachUser;
   UserResult(this.eachUser);
+
+  void showSnackBar(BuildContext context) {
+    SnackBar snackBar = SnackBar(content: Text('NYENYE NYENYE BUBU'));
+    Scaffold.of(context).showSnackBar(snackBar);
+    //  var snackBar = SnackBar(content: Text("data"),);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -120,24 +162,25 @@ class UserResult extends StatelessWidget {
         child: Column(
           children: <Widget>[
             GestureDetector(
-                onTap: () => print('NYENYE NYENYE BUBU'),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.black,
-                    backgroundImage: CachedNetworkImageProvider(eachUser.url),
-                  ),
-                  title: Text(
-                    eachUser.profileName,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    eachUser.username,
-                    style: TextStyle(color: Colors.black, fontSize: 13.0),
-                  ),
-                ))
+              onTap: () => showSnackBar(context),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.black,
+                  backgroundImage: CachedNetworkImageProvider(eachUser.url),
+                ),
+                title: Text(
+                  eachUser.profileName,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  eachUser.username,
+                  style: TextStyle(color: Colors.black, fontSize: 13.0),
+                ),
+              ),
+            )
           ],
         ),
       ),

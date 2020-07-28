@@ -25,7 +25,7 @@ dependencies:
   image_picker: ^0.6.7+4
   google_sign_in: ^4.5.1
   timeago: ^2.0.26
-  cached_network_image: ^2.2.0+1
+  cached_network_image: ^2.1.0
   firebase_auth: ^0.16.1
   geolocator: ^5.3.2+2
   uuid: ^2.2.0

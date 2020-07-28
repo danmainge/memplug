@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
-// const kWhiteColor = Color(ffffff);
+const kWhiteColor = Colors.white;
+// const kWhiteColor = Colors.white.withOpacity(0.4);
 const kDefualtPadding = 20.0;
 const kDefualtShadow =
     BoxShadow(offset: Offset(0, 15), blurRadius: 27, color: Colors.black12);
@@ -27,23 +29,3 @@ const kInputDecoration = InputDecoration(
   ),
   border: OutlineInputBorder(),
 );
-
-//  const kButtonTheme = ButtonTheme(
-//                               minWidth: 200,
-//                               child: RaisedButton(
-//                                 color: Colors.white,
-//                                 elevation: 5.0,
-//                                 padding: EdgeInsets.all(15.0),
-//                                 shape: RoundedRectangleBorder(
-//                                   borderRadius: BorderRadius.circular(30.0),
-//                                 ),
-//                                 child: Text(
-//                                   'here',
-//                                   style: TextStyle(
-//                                       fontSize: 20, color: Color(0xFF5270AA)),
-//                                 ),
-//                                 onPressed: () {
-
-//                                 },
-//                               ),
-//                             );
