@@ -1,11 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:media_picker/media_picker.dart';
 import 'package:memeplug/models/user.dart';
+import 'package:memeplug/pages/HomePage.dart';
 import 'package:memeplug/widgets/constants.dart';
+import 'package:memeplug/widgets/dart/ProgressWidget.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:image/image.dart' as ImD;
+
+import 'package:uuid/uuid.dart';
 
 class UploadPage extends StatefulWidget {
   final User gCurrentUser;
@@ -14,15 +19,69 @@ class UploadPage extends StatefulWidget {
   _UploadPageState createState() => _UploadPageState();
 }
 
-class _UploadPageState extends State<UploadPage> {
+class _UploadPageState extends State<UploadPage>
+    with AutomaticKeepAliveClientMixin<UploadPage> {
   TextEditingController captionTextEditingController = TextEditingController();
-  // String _media = '';
-  // List<dynamic> _mediaPaths;
   File file;
+  bool uploading = false;
+  String postId = Uuid().v4();
+
+  compressingPhoto() async {
+    final tDirectory = await getTemporaryDirectory();
+    final path = tDirectory.path;
+    ImD.Image mImageFile = ImD.decodeImage(file.readAsBytesSync());
+    final compressedImageFile = File('$path/img_$postId.jpg')
+      ..writeAsBytesSync(ImD.encodeJpg(mImageFile, quality: 90));
+    setState(() {
+      file = compressedImageFile;
+    });
+  }
+
+  controlUploadAndSavePost() async {
+    setState(() {
+      uploading = true;
+    });
+    await compressingPhoto();
+    String downloadUrl = await uploadPhoto(file);
+    savePostInfoToFireStore(
+        url: downloadUrl, caption: captionTextEditingController.text);
+    captionTextEditingController.clear();
+    setState(() {
+      file = null;
+      uploading = false;
+      postId = Uuid().v4();
+    });
+  }
+
+  savePostInfoToFireStore({String url, String caption}) {
+    postsReference
+        .document(widget.gCurrentUser.id)
+        .collection('usersPosts')
+        .document(postId)
+        .setData({
+      'postId': postId,
+      'ownerId': widget.gCurrentUser.id,
+      'timestamp': timestamp,
+      'likes': {},
+      'username': widget.gCurrentUser.username,
+      'caption': caption,
+      'url': url,
+    });
+  }
+
+  Future<String> uploadPhoto(mImageFile) async {
+    StorageUploadTask mStorageUploadTask =
+        storageReference.child('post_$postId.jpg').putFile(mImageFile);
+    StorageTaskSnapshot storageTaskSnapshot =
+        await mStorageUploadTask.onComplete;
+    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
   captureImageWithCamera() async {
     Navigator.pop(context);
     File imageFile = await ImagePicker.pickImage(
-        source: ImageSource.camera, maxHeight: 680, maxWidth: 970);
+        source: ImageSource.camera, maxHeight: 1000, maxWidth: 970);
     setState(() {
       this.file = imageFile;
     });
@@ -31,23 +90,11 @@ class _UploadPageState extends State<UploadPage> {
   pickImageFromGallery() async {
     Navigator.pop(context);
     File imageFile = await ImagePicker.pickImage(
-        source: ImageSource.gallery, maxHeight: 680, maxWidth: 970);
+        source: ImageSource.gallery, maxHeight: 1000, maxWidth: 970);
     setState(() {
       this.file = imageFile;
     });
   }
-
-  // pickVideoFromGallery() async {
-  //   try {
-  //     _mediaPaths = await MediaPicker.pickVideos(quantity: 7);
-  //   } on PlatformException {}
-
-  //   if (!mounted) return;
-
-  //   setState(() {
-  //     _media = _mediaPaths.toString();
-  //   });
-  // }
 
   takeImage(mcontext) {
     return showDialog(
@@ -75,7 +122,7 @@ class _UploadPageState extends State<UploadPage> {
                 SimpleDialogOption(
                   child: Text('select video from gallery',
                       style: TextStyle(color: kWhiteColor)),
-                  // onPressed: pickVideoFromGallery,
+                  onPressed: null,
                 ),
                 SimpleDialogOption(
                     child: Text('cancel', style: TextStyle(color: kWhiteColor)),
@@ -96,23 +143,26 @@ class _UploadPageState extends State<UploadPage> {
             size: 200,
           ),
           Padding(
-              padding: EdgeInsets.only(top: 20.0),
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(9.0)),
-                child: Text(
-                  'upload Picture',
-                  style: TextStyle(color: kWhiteColor, fontSize: 20.0),
-                ),
-                color: Colors.greenAccent,
-                onPressed: () => takeImage(context),
-              )),
+            padding: EdgeInsets.only(top: 20.0),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9.0)),
+              child: Text(
+                'upload ',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: kWhiteColor, fontSize: 20.0),
+              ),
+              color: Colors.black,
+              onPressed: () => takeImage(context),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  removeImage() {
+  clearPostInfo() {
+    captionTextEditingController.clear();
     setState(() {
       file = null;
     });
@@ -121,28 +171,29 @@ class _UploadPageState extends State<UploadPage> {
   displayUploadFormScreen() {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: removeImage(),
+          onPressed: clearPostInfo,
         ),
         title: Text(
           'New Post',
           style: TextStyle(
-              fontSize: 40.0, color: kWhiteColor, fontWeight: FontWeight.bold),
+              fontSize: 24.0, color: kWhiteColor, fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
           FlatButton(
-            onPressed: () => print('nyeneye bubu'),
-            child: Text('upload to memeplug',
+            onPressed: uploading ? null : () => controlUploadAndSavePost(),
+            child: Text('Share',
                 style: TextStyle(
-                    fontSize: 40.0,
+                    fontSize: 16.0,
                     color: Colors.lightGreenAccent,
                     fontWeight: FontWeight.bold)),
           ),
         ],
       ),
       body: ListView(children: <Widget>[
+        uploading ? linearProgress() : Text(''),
         Container(
           height: 230,
           width: MediaQuery.of(context).size.width * 0.8,
@@ -159,7 +210,7 @@ class _UploadPageState extends State<UploadPage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 12.0),
+          padding: EdgeInsets.all(12.0),
         ),
         ListTile(
           leading: CircleAvatar(
@@ -172,8 +223,14 @@ class _UploadPageState extends State<UploadPage> {
               style: TextStyle(color: Colors.white.withOpacity(0.4)),
               controller: captionTextEditingController,
               decoration: InputDecoration(
+                fillColor: Colors.white.withOpacity(0.4),
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
                 hintText: 'add an interesting caption',
-                hintStyle: TextStyle(color: kWhiteColor),
+                hintStyle: TextStyle(color: Colors.white),
                 border: InputBorder.none,
               ),
             ),
@@ -183,7 +240,9 @@ class _UploadPageState extends State<UploadPage> {
     );
   }
 
+  bool get wantKeepAlive => true;
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return file == null ? displayUploadScreen() : displayUploadFormScreen();
   }

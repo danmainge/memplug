@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 
 const kWhiteColor = Colors.white;
 // const kWhiteColor = Colors.white.withOpacity(0.4);

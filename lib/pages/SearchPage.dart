@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:memeplug/models/user.dart';
 import 'package:memeplug/pages/HomePage.dart';
-import 'package:memeplug/widgets/constants.dart';
+
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
 
@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage>
   }
 
   controlSearching(String str) {
-    Future<QuerySnapshot> allUsers = userReference
+    Future<QuerySnapshot> allUsers = usersReference
         .where('profileName', isGreaterThanOrEqualTo: str)
         .getDocuments();
     setState(() {
@@ -69,11 +69,11 @@ class _SearchPageState extends State<SearchPage>
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            // Image.asset(
-            //   'assets/images/playstore.png',
-            //   height: 200,
-            //   width: 200,
-            // ),
+            Image.asset(
+              'assets/images/shrug.jpg',
+              height: 200,
+              width: 200,
+            ),
             Icon(
               Icons.group,
               color: Colors.grey,
@@ -99,28 +99,6 @@ class _SearchPageState extends State<SearchPage>
         builder: (context, dataSnapshot) {
           if (!dataSnapshot.hasData) {
             return circularProgress();
-            Center(
-              child: Column(
-                children: <Widget>[
-                  Image.asset(
-                    'assets/images/playstore.jpg',
-                    height: 200,
-                    width: 200,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'user not found',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 50.0),
-                  )
-                ],
-              ),
-            );
           }
           List<UserResult> searchUsersResult = [];
           dataSnapshot.data.documents.forEach((document) {
@@ -158,7 +136,7 @@ class UserResult extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(3.0),
       child: Container(
-        color: Colors.white54,
+        color: Colors.black12,
         child: Column(
           children: <Widget>[
             GestureDetector(
@@ -171,13 +149,13 @@ class UserResult extends StatelessWidget {
                 title: Text(
                   eachUser.profileName,
                   style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
                   eachUser.username,
-                  style: TextStyle(color: Colors.black, fontSize: 13.0),
+                  style: TextStyle(color: Colors.white, fontSize: 13.0),
                 ),
               ),
             )

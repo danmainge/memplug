@@ -1,6 +1,7 @@
 // import 'dart:html';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,8 +14,11 @@ import 'package:memeplug/pages/UploadPage.dart';
 import 'package:memeplug/models/user.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
-final userReference = Firestore.instance.collection('Users');
-final DateTime timeStamp = DateTime.now();
+final usersReference = Firestore.instance.collection('Users');
+final StorageReference storageReference =
+    FirebaseStorage.instance.ref().child('Posts Pictures');
+final DateTime timestamp = DateTime.now();
+final postsReference = Firestore.instance.collection('posts');
 User currentUser;
 
 class HomePage extends StatefulWidget {
@@ -58,20 +62,20 @@ class _HomePageState extends State<HomePage> {
   userSaveInfoToFireStore() async {
     final GoogleSignInAccount gCurrentUser = gSignIn.currentUser;
     DocumentSnapshot documentSnapshot =
-        await userReference.document(gCurrentUser.id).get();
+        await usersReference.document(gCurrentUser.id).get();
     if (!documentSnapshot.exists) {
       final username = await Navigator.push(context,
           MaterialPageRoute(builder: (context) => CreateAccountPage()));
-      userReference.document(gCurrentUser.id).setData({
+      usersReference.document(gCurrentUser.id).setData({
         'id': gCurrentUser.id,
         'profileName': gCurrentUser.displayName,
         'username': username,
         'url': gCurrentUser.photoUrl,
         'email': gCurrentUser.email,
         'bio': "",
-        'timestamp': timeStamp,
+        'timestamp': timestamp,
       });
-      documentSnapshot = await userReference.document(gCurrentUser.id).get();
+      documentSnapshot = await usersReference.document(gCurrentUser.id).get();
     }
     currentUser = User.fromDocument(documentSnapshot);
   }
@@ -113,7 +117,9 @@ class _HomePageState extends State<HomePage> {
               label: Text('sign out')),
           // TimeLinePage(),
           SearchPage(),
-          UploadPage(),
+          UploadPage(
+            gCurrentUser: currentUser,
+          ),
           NotificationsPage(),
           ProfilePage()
         ],
