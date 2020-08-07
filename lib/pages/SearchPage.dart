@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:memeplug/models/user.dart';
 import 'package:memeplug/pages/HomePage.dart';
-
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
 

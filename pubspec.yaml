@@ -36,6 +36,10 @@ dependencies:
   flutter_icons: ^1.0.0+1
   flutter_svg: ^0.17.4
   media_picker: ^1.3.5
+  flutter_spinkit: ^4.1.2
+  line_awesome_flutter: ^1.0.1
+  flutter_screenutil: ^1.0.2
+  animated_theme_switcher: ^1.0.5
 
 dev_dependencies:
   flutter_test:
@@ -53,7 +57,16 @@ flutter:
     - family: Signatra
       fonts:
         - asset: assets/fonts/Signatra.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+    # - family: SFProText
+    #   fonts:
+    #     - asset: assets/fonts/SF-Pro-Text-Thin.otf
+    #       weight: 100
+    #     - asset: assets/fonts/SF-Pro-Text-Regular.otf
+    #       weight: 400
+    #     - asset: assets/fonts/SF-Pro-Text-Meduim.otf
+    #       weight: 500
+    #     - asset: assets/fonts/SF-Pro-Text-Bold.otf
+    #       weight: 600
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

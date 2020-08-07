@@ -10,7 +10,7 @@ import 'package:memeplug/pages/NotificationsPage.dart';
 import 'package:memeplug/pages/ProfilePage.dart';
 import 'package:memeplug/pages/SearchPage.dart';
 import 'package:memeplug/pages/UploadPage.dart';
-
+import 'package:memeplug/pages/ProfilePage.dart';
 import 'package:memeplug/models/user.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
@@ -114,14 +114,17 @@ class _HomePageState extends State<HomePage> {
           RaisedButton.icon(
               onPressed: logOutUser,
               icon: Icon(Icons.close),
-              label: Text('sign out')),
+              label: Text(
+                'sign out',
+                style: TextStyle(fontFamily: 'SFProText'),
+              )),
           // TimeLinePage(),
           SearchPage(),
           UploadPage(
             gCurrentUser: currentUser,
           ),
           NotificationsPage(),
-          ProfilePage()
+          ProfilePage(userProfileId: currentUser.id),
         ],
         controller: pageController,
         onPageChanged: whenPageChanges,
@@ -132,11 +135,15 @@ class _HomePageState extends State<HomePage> {
         onTap: onTapChange,
         backgroundColor: Theme.of(context).accentColor,
         activeColor: Colors.white,
-        inactiveColor: Colors.blue,
+        inactiveColor: Colors.yellow[900],
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home)),
           BottomNavigationBarItem(icon: Icon(Icons.search)),
           BottomNavigationBarItem(icon: Icon(Icons.photo_camera, size: 37.0)),
+          BottomNavigationBarItem(
+              icon: Icon(
+            Icons.favorite,
+          )),
           BottomNavigationBarItem(icon: Icon(Icons.person))
         ],
       ),
@@ -151,9 +158,13 @@ class _HomePageState extends State<HomePage> {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Theme.of(context).accentColor,
-              Theme.of(context).primaryColor
+              Colors.black,
+              Colors.black38,
+              Colors.yellow[700],
+              Colors.yellow[800],
+              Colors.yellow[900]
             ],
+            stops: [0.2, 0.4, 0.6, 0.8, 1.0],
           ),
         ),
         alignment: Alignment.center,

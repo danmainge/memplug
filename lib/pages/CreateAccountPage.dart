@@ -62,8 +62,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           }
                         },
                         onSaved: (val) => username = val,
-                        decoration:
-                            kInputDecoration.copyWith(labelText: 'username'),
+                        decoration: kInputDecoration.copyWith(
+                            labelText: 'username',
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            fillColor: Colors.white.withOpacity(0.4),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0))),
                       ),
                     ),
                   ),
