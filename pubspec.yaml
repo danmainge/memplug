@@ -57,16 +57,16 @@ flutter:
     - family: Signatra
       fonts:
         - asset: assets/fonts/Signatra.ttf
-    # - family: SFProText
-    #   fonts:
-    #     - asset: assets/fonts/SF-Pro-Text-Thin.otf
-    #       weight: 100
-    #     - asset: assets/fonts/SF-Pro-Text-Regular.otf
-    #       weight: 400
-    #     - asset: assets/fonts/SF-Pro-Text-Meduim.otf
-    #       weight: 500
-    #     - asset: assets/fonts/SF-Pro-Text-Bold.otf
-    #       weight: 600
+    - family: SFProText
+      fonts:
+        - asset: assets/fonts/SF-Pro-Text-Thin.otf
+          weight: 100
+        - asset: assets/fonts/SF-Pro-Text-Regular.otf
+          weight: 400
+        - asset: assets/fonts/SF-Pro-Text-Medium.otf
+          weight: 500
+        - asset: assets/fonts/SF-Pro-Text-Bold.otf
+          weight: 600
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

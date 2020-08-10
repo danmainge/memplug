@@ -10,8 +10,8 @@ import 'package:memeplug/pages/NotificationsPage.dart';
 import 'package:memeplug/pages/ProfilePage.dart';
 import 'package:memeplug/pages/SearchPage.dart';
 import 'package:memeplug/pages/UploadPage.dart';
-import 'package:memeplug/pages/ProfilePage.dart';
 import 'package:memeplug/models/user.dart';
+import 'package:memeplug/pages/changeprofilepicture.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection('Users');

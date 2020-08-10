@@ -1,5 +1,3 @@
-// import 'dart:js';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:memeplug/models/user.dart';
@@ -23,34 +21,65 @@ class _ProfilePageState extends State<ProfilePage> {
         future: usersReference.document(widget.userProfileId).get(),
         builder: (context, dataSnapshot) {
           if (!dataSnapshot.hasData) {
-            return circularProgress();
+            return kSpinKitChasingDots();
           }
           User user = User.fromDocument(dataSnapshot.data);
           return Padding(
             padding: EdgeInsets.all(17.0),
             child: Column(
               children: <Widget>[
-                CircleAvatar(
-                  radius: 45.0,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: CachedNetworkImageProvider(user.url),
-                ),
-                Column(
+                Row(
                   children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        createColumns('posts', 0),
-                        createColumns('followers', 0),
-                        createColumns('following', 0),
-                      ],
+                    CircleAvatar(
+                      radius: 35.0,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: CachedNetworkImageProvider(user.url),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[createButton()],
-                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              createColumns('posts', 0),
+                              createColumns('followers', 0),
+                              createColumns('following', 0),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[createButton()],
+                          ),
+                        ],
+                      ),
+                    )
                   ],
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 9),
+                  child: Text(
+                    user.username != null ? user.username : 'memelord',
+                    style: TextStyle(fontSize: 14.0, color: Colors.white),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 3),
+                  child: Text(
+                    user.profileName,
+                    style: TextStyle(fontSize: 18.0, color: Colors.white),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 3),
+                  child: Text(
+                    user.bio,
+                    style: TextStyle(fontSize: 18.0, color: Colors.white54),
+                  ),
                 )
               ],
             ),
@@ -71,9 +100,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: EdgeInsets.only(top: 3.0),
       child: FlatButton(
-          onPressed: null,
+          onPressed: performFunction,
           child: Container(
-            width: 245.0,
+            width: 150.0,
             height: 26.0,
             child: Text(
               title,
@@ -125,6 +154,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: header(context, isAppTitle: true, strTitle: 'Profile'),
-        body: ListView(children: <Widget>[createProfileTopView()]));
+        body: ListView(children: <Widget>[
+          createProfileTopView(),
+        ]));
   }
 }
