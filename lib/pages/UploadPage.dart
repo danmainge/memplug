@@ -31,7 +31,7 @@ class _UploadPageState extends State<UploadPage>
     final path = tDirectory.path;
     ImD.Image mImageFile = ImD.decodeImage(file.readAsBytesSync());
     final compressedImageFile = File('$path/img_$postId.jpg')
-      ..writeAsBytesSync(ImD.encodeJpg(mImageFile, quality: 90));
+      ..writeAsBytesSync(ImD.encodeJpg(mImageFile, quality: 60));
     setState(() {
       file = compressedImageFile;
     });
@@ -98,9 +98,11 @@ class _UploadPageState extends State<UploadPage>
 
   takeImage(mcontext) {
     return showDialog(
+      
         context: mcontext,
         builder: (context) {
           return SimpleDialog(
+            backgroundColor: kDarkSecondaryColor,
               title: Text(
                 'New Post',
                 style:

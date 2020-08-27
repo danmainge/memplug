@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:memeplug/widgets/constants.dart';
 
 circularProgress() {
   return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 12),
       child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(Colors.lightGreenAccent)));
+          valueColor: AlwaysStoppedAnimation(Color(0xFFFFC107))));
 }
 
 linearProgress() {
@@ -14,7 +15,7 @@ linearProgress() {
     alignment: Alignment.center,
     padding: EdgeInsets.only(top: 12),
     child: LinearProgressIndicator(
-      valueColor: AlwaysStoppedAnimation(Colors.yellowAccent),
+      valueColor: AlwaysStoppedAnimation(Color(0xFFFFC107)),
     ),
   );
 }
@@ -25,7 +26,7 @@ kSpinKitChasingDots() {
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 12),
       child: SpinKitChasingDots(
-        color: Colors.yellowAccent,
+        color: kButtonColor,
       )
 
       //  LinearProgressIndicator(
@@ -41,7 +42,8 @@ class KSpinner extends StatelessWidget {
       color: Colors.black,
       child: Center(
         child: SpinKitChasingDots(
-          color: Colors.yellowAccent,
+          color: kButtonColor,
+          size: 50.0,
         ),
       ),
     );

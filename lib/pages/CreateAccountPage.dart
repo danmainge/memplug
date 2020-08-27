@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:memeplug/widgets/constants.dart';
 import 'package:memeplug/widgets/dart/HeaderWidget.dart';
+import 'package:memeplug/widgets/dart/ProgressWidget.dart';
 
 class CreateAccountPage extends StatefulWidget {
   @override
@@ -13,13 +15,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String username;
+  // bool loadingScreen = false;
   submitusername() {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
+      // setState(() {
+      //   loadingScreen = true;
+      // });
       SnackBar snackBar = SnackBar(content: Text('welcome ' + username));
       _scaffoldKey.currentState.showSnackBar(snackBar);
-      Timer(Duration(seconds: 1), () {
+      Timer(Duration(seconds: 4), () {
+        // bool loadingScreen = false;
         Navigator.pop(context, username);
       });
     }
@@ -27,7 +34,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+        // loadingScreen
+        //     ? KSpinner()
+        //     :
+        Scaffold(
       key: _scaffoldKey,
       appBar: header(context, strTitle: 'Settings', disappearBackButton: true),
       body: ListView(
@@ -56,19 +67,21 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           if (val.trim().length < 5 || val.isEmpty) {
                             return 'username is too short';
                           } else if (val.trim().length > 12) {
-                            return 'username should is too long';
+                            return 'username should be between 5 to 12 ';
                           } else {
                             return null;
                           }
                         },
                         onSaved: (val) => username = val,
                         decoration: kInputDecoration.copyWith(
+                            hintText: 'your royal memelord',
                             labelText: 'username',
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0)),
+                            labelStyle:
+                                TextStyle(fontSize: 16.0, color: kGreyColor),
                             fillColor: Colors.white.withOpacity(0.4),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0))),
+                            errorBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                                borderSide: BorderSide(color: kButtonColor))),
                       ),
                     ),
                   ),
@@ -76,7 +89,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ButtonTheme(
                   minWidth: 200,
                   child: RaisedButton(
-                    color: Colors.white,
+                    color: kButtonColor,
                     elevation: 5.0,
                     padding: EdgeInsets.all(15.0),
                     shape: RoundedRectangleBorder(
@@ -84,7 +97,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     ),
                     child: Text(
                       'submit',
-                      style: TextStyle(fontSize: 20, color: Color(0xFF5270AA)),
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Theme.of(context).accentColor,
+                          fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       submitusername();

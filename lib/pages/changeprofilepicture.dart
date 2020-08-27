@@ -3,8 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:memeplug/models/user.dart';
-import 'package:memeplug/pages/EditProfilePage.dart';
+import 'package:memeplug/widgets/dart/HeaderWidget.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
 
 class ProfilePicture extends StatefulWidget {
@@ -38,14 +37,14 @@ class _ProfilePictureState extends State<ProfilePicture> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-          title: Text('profile picture'),
+          title: header(context, strTitle: 'change profilePicture'),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context)),
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: () => _showProfileBottomSheet()),
+                onPressed: () => _showProfileBottomSheet),
             IconButton(
                 icon: Icon(Icons.save),
                 onPressed: () => showBottomSheet(
@@ -66,8 +65,11 @@ class _ProfilePictureState extends State<ProfilePicture> {
                   child: AspectRatio(
                       aspectRatio: 16 / 9,
                       child: Container(
-                          // decoration: BoxDecoration(image: DecorationImage(image: CachedNetworkImageProvider())),
-                          )),
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                // image: CachedNetworkImageProvider()
+                                )),
+                      )),
                 )),
           ],
         ));
@@ -76,9 +78,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
   displayChangingProfilePicture() {}
   @override
   Widget build(BuildContext context) {
-    return OriginalProfilePicture == true
-        ? displayOriginalProfilePicture()
-        : displayChangingProfilePicture();
+    return displayOriginalProfilePicture();
   }
 
   void _showProfileBottomSheet() {
@@ -106,37 +106,37 @@ class _ProfilePictureState extends State<ProfilePicture> {
         Expanded(
           child: ListTile(
             title: Icon(Ionicons.ios_images),
-            //  Icon(Ionicons.ios_images),
             subtitle: Text(
               'gallery',
               textAlign: TextAlign.center,
             ),
-            onTap: retriveImageFromGallery(),
+//            onTap: retriveImageFromGallery(),
           ),
         ),
         Expanded(
           child: ListTile(
             title: Icon(Ionicons.ios_camera),
             subtitle: Text('take photo', textAlign: TextAlign.center),
-            onTap: captureWithCamera(),
+//            onTap: captureWithCamera(),
           ),
         ),
         Expanded(
           child: ListTile(
               title: Icon(Icons.close),
               subtitle: Text('cancel', textAlign: TextAlign.center),
-              onTap: closeBottomSheet),
+              onTap: closeBottomSheet()),
         )
       ],
     );
   }
 
-  void closeBottomSheet() {
-    Navigator.pop(context);
-  }
-
-  void openGallery() {
+  closeBottomSheet() {
     Navigator.pop(context);
     setState(() {});
   }
+
+//  void openGallery() {
+//    Navigator.pop(context);
+//    setState(() {});
+//  }
 }

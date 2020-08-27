@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memeplug/pages/HomePage.dart';
+import 'package:memeplug/widgets/constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,14 +14,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MemePlug',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.black,
-        //the above sets all scaffold to a defualt of black
-        dialogBackgroundColor: Colors.black,
-        primarySwatch: Colors.grey,
-        accentColor: Colors.black,
-        cardColor: Colors.white70,
-      ),
+      theme: kDarkTheme,
+      // theme: ThemeData(
+      //   scaffoldBackgroundColor: Colors.black,
+      //   //the above sets all scaffold to a defualt of black
+      //   dialogBackgroundColor: Colors.black,
+      //   primarySwatch: Colors.grey,
+      //   accentColor: Colors.black,
+      //   cardColor: Colors.white70,
+      // ),
       home: HomePage(),
     );
   }

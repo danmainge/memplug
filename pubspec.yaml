@@ -40,6 +40,7 @@ dependencies:
   line_awesome_flutter: ^1.0.1
   flutter_screenutil: ^1.0.2
   animated_theme_switcher: ^1.0.5
+  introduction_screen: ^1.0.7
 
 dev_dependencies:
   flutter_test:

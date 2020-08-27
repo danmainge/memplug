@@ -1,5 +1,3 @@
-// import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,9 +7,12 @@ import 'package:memeplug/pages/CreateAccountPage.dart';
 import 'package:memeplug/pages/NotificationsPage.dart';
 import 'package:memeplug/pages/ProfilePage.dart';
 import 'package:memeplug/pages/SearchPage.dart';
+import 'package:memeplug/pages/TimeLinePage.dart';
 import 'package:memeplug/pages/UploadPage.dart';
 import 'package:memeplug/models/user.dart';
 import 'package:memeplug/pages/changeprofilepicture.dart';
+import 'package:memeplug/widgets/constants.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection('Users');
@@ -30,6 +31,8 @@ class _HomePageState extends State<HomePage> {
   bool isSignedIn = false;
   PageController pageController;
   int getPageIndex = 0;
+  bool klabelNavigationColor = false;
+  int colorIndex = 0;
 
   void initState() {
     pageController = PageController();
@@ -96,6 +99,7 @@ class _HomePageState extends State<HomePage> {
   whenPageChanges(int pageIndex) {
     setState(() {
       this.getPageIndex = pageIndex;
+      this.colorIndex = pageIndex;
     });
   }
 
@@ -135,16 +139,48 @@ class _HomePageState extends State<HomePage> {
         onTap: onTapChange,
         backgroundColor: Theme.of(context).accentColor,
         activeColor: Colors.white,
-        inactiveColor: Colors.yellow[900],
+        inactiveColor: Colors.grey,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home)),
-          BottomNavigationBarItem(icon: Icon(Icons.search)),
-          BottomNavigationBarItem(icon: Icon(Icons.photo_camera, size: 37.0)),
           BottomNavigationBarItem(
-              icon: Icon(
-            Icons.favorite,
-          )),
-          BottomNavigationBarItem(icon: Icon(Icons.person))
+              icon: Icon(Icons.home, size: 27.0),
+              title: new Text(
+                'Home',
+                style: TextStyle(
+                  color: colorIndex == 0 ? kButtonColor : kGreyColor,
+                ),
+              )),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.search, size: 27.0),
+              title: Text(
+                'Search',
+                style: TextStyle(
+                  color: colorIndex == 1 ? kButtonColor : kGreyColor,
+                ),
+              )),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.photo_camera, size: 27.0),
+              title: Text(
+                'Camera',
+                style: TextStyle(
+                  color: colorIndex == 2 ? kButtonColor : kGreyColor,
+                ),
+              )),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite, size: 27.0),
+              title: Text(
+                'Favorite',
+                style: TextStyle(
+                  color: colorIndex == 3 ? kButtonColor : kGreyColor,
+                ),
+              )),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person, size: 27.0),
+              title: Text(
+                'person',
+                style: TextStyle(
+                  color: colorIndex == 4 ? kButtonColor : kGreyColor,
+                ),
+              ))
         ],
       ),
     );

@@ -9,7 +9,7 @@ header(context,
       isAppTitle ? 'MemePlug' : strTitle,
       style: TextStyle(
         color: Colors.white,
-        fontFamily: isAppTitle ? 'Signatra' : '',
+        fontFamily: isAppTitle ? 'Signatra' : 'SFProText',
         fontSize: isAppTitle ? 45.0 : 22.0,
       ),
       overflow: TextOverflow.ellipsis,

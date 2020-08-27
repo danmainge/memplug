@@ -1,17 +1,13 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:memeplug/models/user.dart';
 import 'package:memeplug/pages/HomePage.dart';
 import 'package:memeplug/pages/changeprofilepicture.dart';
 import 'package:memeplug/widgets/constants.dart';
-import 'package:memeplug/widgets/dart/CImageWidget.dart';
+
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:memeplug/pages/profileimage.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String currentOnlineUserId;
@@ -47,54 +43,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       loading = false;
     });
   }
-
-  // takeImage(mcontext) {
-  //   return showDialog(
-  //       context: mcontext,
-  //       builder: (context) {
-  //         return SimpleDialog(
-  //           title: Text('change profile picture',
-  //               style:
-  //                   TextStyle(color: kWhiteColor, fontWeight: FontWeight.bold)),
-  //           children: <Widget>[
-  //             SimpleDialogOption(
-  //               child: Text('capture image with camera'),
-  //               onPressed: captureWithCamera,
-  //             ),
-  //             SimpleDialogOption(
-  //               child: Text('capture image with cameea'),
-  //               onPressed: retriveImageFromGallery,
-  //             ),
-  //             SimpleDialogOption(
-  //               child: Text('cancel', style: TextStyle(color: kWhiteColor)),
-  //               onPressed: () => Navigator.pop(context),
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
-
-  // updateProfileImage() {
-  //   // takeImage(context);
-  // }
-
-  // profilePictureScaffold() {
-  //   return Scaffold(
-  //     backgroundColor: Colors.black,
-  //     appBar: AppBar(
-  //       title: Text(
-  //         'profile picture',
-  //         style: TextStyle(color: Colors.white, fontSize: 15.0),
-  //       ),
-  //       actions: <Widget>[
-  //         IconButton(
-  //           icon: Icon(Icons.edit),
-  //           onPressed: showProfileSnackBar(context),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
 
   updateUserData() {
     setState(() {
@@ -150,15 +98,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(top: 15.0, bottom: 7.0),
-                        child: GestureDetector(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfilePicture())),
-                          child: CircleAvatar(
-                            radius: 52.0,
-                            backgroundImage:
-                                CachedNetworkImageProvider(user.url),
+                        child: Container(
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProfilePicture())),
+                                  child: CircleAvatar(
+                                    radius: 52.0,
+                                    backgroundImage:
+                                        CachedNetworkImageProvider(user.url),
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                    // color: kButtonColor,
+                                    decoration:
+                                        BoxDecoration(shape: BoxShape.circle),
+                                    child: Icon(
+                                      LineAwesomeIcons.pen,
+                                      size: 15.0,
+                                      // color: Colors.black,
+                                    )),
+                              )
+                            ],
                           ),
                         ),
                       ),
