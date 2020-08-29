@@ -12,7 +12,6 @@ import 'package:memeplug/pages/UploadPage.dart';
 import 'package:memeplug/models/user.dart';
 import 'package:memeplug/pages/changeprofilepicture.dart';
 import 'package:memeplug/widgets/constants.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection('Users');
@@ -20,6 +19,8 @@ final StorageReference storageReference =
     FirebaseStorage.instance.ref().child('Posts Pictures');
 final DateTime timestamp = DateTime.now();
 final postsReference = Firestore.instance.collection('posts');
+final commentsReference = Firestore.instance.collection('comments');
+final activityFeedReference = Firestore.instance.collection('feed');
 User currentUser;
 
 class HomePage extends StatefulWidget {
@@ -106,7 +107,7 @@ class _HomePageState extends State<HomePage> {
   onTapChange(int pageIndex) {
     pageController.animateToPage(
       pageIndex,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 1),
       curve: Curves.bounceInOut,
     );
   }

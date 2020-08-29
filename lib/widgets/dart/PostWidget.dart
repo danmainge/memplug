@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:memeplug/models/user.dart';
+import 'package:memeplug/pages/CommentsPage.dart';
 import 'package:memeplug/pages/HomePage.dart';
 import 'package:memeplug/widgets/constants.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
@@ -81,6 +84,7 @@ class _PostState extends State<Post> {
       this.likeCount});
   @override
   Widget build(BuildContext context) {
+    isLiked = (likes[currentOnlineUserId] == true);
     return Padding(
       padding: EdgeInsets.only(bottom: 13.0),
       child: Column(
@@ -129,16 +133,93 @@ class _PostState extends State<Post> {
     );
   }
 
+  removeLike() {
+    bool isNotPostOwner = currentOnlineUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedReference
+          .document(ownerId)
+          .collection('feedItems')
+          .document(ownerId)
+          .get()
+          .then((document) {
+        if (document.exists) {
+          document.reference.delete();
+        }
+      });
+    }
+  }
+
+  addlike() {
+    bool isNotPostOwnerId = currentOnlineUserId != ownerId;
+    if (isNotPostOwnerId) {
+      activityFeedReference
+          .document(ownerId)
+          .collection('feedItems')
+          .document(postId)
+          .setData({
+        'type': 'like',
+        'username': currentUser.username,
+        'userId': currentUser.id,
+        'timestamp': timestamp,
+        'url': url,
+        'postId': postId,
+        'userProfileImg': currentUser.url,
+      });
+    }
+  }
+
+  controlUserLikePost() {
+    bool _liked = likes[currentOnlineUserId] == true;
+    if (_liked) {
+      postsReference
+          .document(ownerId)
+          .collection('usersPosts')
+          .document(postId)
+          .updateData({'likes.$currentOnlineUserId': false});
+      removeLike();
+      setState(() {
+        likeCount = likeCount - 1;
+        isLiked = false;
+        likes[currentOnlineUserId] = false;
+      });
+    } else if (!_liked) {
+      postsReference
+          .document(ownerId)
+          .collection('usersPosts')
+          .document(postId)
+          .updateData({'likes.$currentOnlineUserId': true});
+      addlike();
+      setState(() {
+        likeCount = likeCount + 1;
+        isLiked = true;
+        likes[currentOnlineUserId] = true;
+        showHeart = true;
+      });
+      Timer(Duration(milliseconds: 800), () {
+        setState(() {
+          showHeart = false;
+        });
+      });
+    }
+  }
+
   createPostPicture() {
     return GestureDetector(
-      onDoubleTap: () => print('post liked image'),
+      onDoubleTap: () => controlUserLikePost,
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
           // CachedNetworkImage(imageUrl: url)
           Image.network(
             url,
-          )
+          ),
+          showHeart
+              ? Icon(
+                  Icons.favorite,
+                  size: 120.0,
+                  color: kButtonColor,
+                )
+              : Text('')
         ],
       ),
     );
@@ -153,18 +234,24 @@ class _PostState extends State<Post> {
               padding: EdgeInsets.only(top: 40, left: 20),
             ),
             GestureDetector(
-              onTap: () => print('liked'),
+              onTap: () {
+                controlUserLikePost();
+                print(Text('like taped'));
+              },
               child: Icon(
-                FontAwesome.thumbs_o_up,
-                // isLiked ? FontAwesome.thumbs_o_up : FontAwesome.thumbs_up,
-                color: Colors.white,
-              ),
+                  // FontAwesome.thumbs_o_up,
+                  isLiked ? FontAwesome.thumbs_up : FontAwesome.thumbs_o_up,
+                  color: Colors.white),
             ),
             Padding(
               padding: EdgeInsets.only(right: 20.0),
             ),
             GestureDetector(
-              onTap: () => print('comments'),
+              onTap: () {
+                displayComments(context,
+                    ownerId: ownerId, postId: postId, url: url);
+                print(Text('comments taped'));
+              },
               child: Icon(
                 Icons.chat_bubble_outline,
                 size: 28.0,
@@ -205,5 +292,13 @@ class _PostState extends State<Post> {
         )
       ],
     );
+  }
+
+  displayComments(BuildContext context,
+      {String ownerId, String postId, String url}) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return CommentsPage(
+          postId: postId, postOwnerId: ownerId, postImageUrl: url);
+    }));
   }
 }
