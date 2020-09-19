@@ -25,10 +25,46 @@ class _ProfilePageState extends State<ProfilePage> {
   int countPost = 0;
   List<Post> postsList = [];
   String postOrientation = 'grid';
-
+  int countTotalFollowers = 0;
+  int countTotalFollowings = 0;
+  bool following = false;
   void initState() {
     super.initState();
     getAllProfilePosts();
+    getAllFollowers();
+    getAllFollowings();
+    checkIfAlreadyFollowing();
+  }
+
+  getAllFollowings() async {
+    QuerySnapshot querySnapshot = await followingReference
+        .document(widget.userProfileId)
+        .collection('userFollowing')
+        .getDocuments();
+    setState(() {
+      countTotalFollowings = querySnapshot.documents.length;
+    });
+  }
+
+  getAllFollowers() async {
+    QuerySnapshot querySnapshot = await followersReference
+        .document(widget.userProfileId)
+        .collection('userFollowers')
+        .getDocuments();
+    setState(() {
+      countTotalFollowers = querySnapshot.documents.length;
+    });
+  }
+
+  checkIfAlreadyFollowing() async {
+    DocumentSnapshot documentSnapshot = await followersReference
+        .document(widget.userProfileId)
+        .collection('usersFollowers')
+        .document(currentOnlineUserId)
+        .get();
+    setState(() {
+      following = documentSnapshot.exists;
+    });
   }
 
   createProfileTopView() {
@@ -36,7 +72,10 @@ class _ProfilePageState extends State<ProfilePage> {
         future: usersReference.document(widget.userProfileId).get(),
         builder: (context, dataSnapshot) {
           if (!dataSnapshot.hasData) {
-            return kSpinKitChasingDots();
+            return Container(
+              width: 0,
+              height: 0,
+            );
           }
           User user = User.fromDocument(dataSnapshot.data);
           return Padding(
@@ -50,34 +89,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Icon(
-                      LineAwesomeIcons.arrow_left,
-                    ),
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 35.0,
-                          backgroundColor: Colors.grey,
-                          backgroundImage: CachedNetworkImageProvider(user.url),
-                          child: Stack(children: [
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Container(
-                                child: Icon(
-                                  LineAwesomeIcons.pen,
-                                  size: 15.0,
-                                  color: kDarkPrimaryColor,
-                                ),
-                                decoration:
-                                    BoxDecoration(shape: BoxShape.circle),
-                              ),
-                            )
-                          ]),
-                        ),
-                      ],
+                    CircleAvatar(
+                      radius: 35.0,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: CachedNetworkImageProvider(user.url),
                     ),
                     Expanded(
                       flex: 1,
@@ -87,9 +102,17 @@ class _ProfilePageState extends State<ProfilePage> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              createColumns('posts', 0),
-                              createColumns('followers', 0),
-                              createColumns('following', 0),
+                              createColumns('posts', countPost
+                                  // 1000000
+                                  ),
+                              createColumns(
+                                  'followers',
+                                  // 100000
+                                  countTotalFollowers),
+                              createColumns(
+                                  'following',
+                                  // 10000000000
+                                  countTotalFollowings),
                             ],
                           ),
                           Row(
@@ -105,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.only(top: 9),
                   child: Text(
-                    user.username != null ? user.username : 'memelord',
+                    user.username,
                     style: TextStyle(fontSize: 14.0, color: Colors.white),
                   ),
                 ),
@@ -136,7 +159,83 @@ class _ProfilePageState extends State<ProfilePage> {
     if (ownProfile) {
       return createButtonTitleAndFunction(
           title: 'Edit profile', performFunction: editUserProfile);
+    } else if (following) {
+      return createButtonTitleAndFunction(
+        title: 'unfollow',
+        performFunction: controlUnFollowUser,
+      );
+    } else if (!following) {
+      return createButtonTitleAndFunction(
+        title: 'follow',
+        performFunction: controlFollowUser,
+      );
     }
+  }
+
+  controlUnFollowUser() {
+    setState(() {
+      following = false;
+    });
+    followersReference
+        .document(widget.userProfileId)
+        .collection('userFollowing')
+        .document(currentOnlineUserId)
+        .get()
+        .then((document) {
+      if (document.exists) {
+        document.reference.delete();
+      }
+    });
+
+    followingReference
+        .document(currentOnlineUserId)
+        .collection('userFolllowing')
+        .document(widget.userProfileId)
+        .get()
+        .then((document) {
+      if (document.exists) {
+        document.reference.delete();
+      }
+    });
+    activityFeedReference
+        .document(widget.userProfileId)
+        .collection('feedItems')
+        .document(currentOnlineUserId)
+        .get()
+        .then((document) {
+      if (document.exists) {
+        document.reference.delete();
+      }
+    });
+  }
+
+  controlFollowUser() {
+    setState(() {
+      following = true;
+    });
+    followersReference
+        .document(widget.userProfileId)
+        .collection('userFollowers')
+        .document(currentOnlineUserId)
+        .setData({});
+    followingReference
+        .document(currentOnlineUserId)
+        .collection('userFollowing')
+        .document(widget.userProfileId)
+        .setData({});
+
+    activityFeedReference
+        .document(widget.userProfileId)
+        .collection('feedItems')
+        .document(currentOnlineUserId)
+        .setData({
+      'type': 'follow',
+      'ownerId': widget.userProfileId,
+      'username': currentUser.username,
+      'timestamp': DateTime.now(),
+      'userProfileImg': currentUser.url,
+      'userId': currentOnlineUserId
+    });
   }
 
   Container createButtonTitleAndFunction(
@@ -150,11 +249,13 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 26.0,
             child: Text(
               title,
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: following ? Colors.grey : Theme.of(context).accentColor,
+              ),
             ),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: Colors.black,
+                color: following ? Colors.black : kButtonColor,
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(6.0)),
           )),
@@ -233,7 +334,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: EdgeInsets.all(30.0),
                 child: Text('No posts',
                     style: TextStyle(
-                        color: Colors.yellow[500],
+                        color: Colors.grey,
                         fontSize: 30.0,
                         fontWeight: FontWeight.bold))),
           ],

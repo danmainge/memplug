@@ -41,6 +41,7 @@ dependencies:
   flutter_screenutil: ^1.0.2
   animated_theme_switcher: ^1.0.5
   introduction_screen: ^1.0.7
+  splashscreen: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,10 @@ flutter:
           weight: 500
         - asset: assets/fonts/SF-Pro-Text-Bold.otf
           weight: 600
+    # - family: SourceSansPro-LightItalic
+    #   fonts:
+    #     - asset: assets/fonts/SourceSansPro-LightItalic.tff
+
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

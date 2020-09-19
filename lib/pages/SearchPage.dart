@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:memeplug/models/user.dart';
 import 'package:memeplug/pages/HomePage.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:memeplug/pages/ProfilePage.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
 
 class SearchPage extends StatefulWidget {
@@ -38,9 +39,10 @@ class _SearchPageState extends State<SearchPage>
           fillColor: Colors.white.withOpacity(0.4),
           filled: true,
           hintText: 'Look for friends',
-          hintStyle: TextStyle(color: Colors.white),
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          hintStyle: TextStyle(color: Colors.grey),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(30.0)),
           prefixIcon: Icon(Feather.search, color: Colors.white),
           prefixIconConstraints: BoxConstraints(minHeight: 32, minWidth: 32),
           suffix: IconButton(
@@ -49,7 +51,7 @@ class _SearchPageState extends State<SearchPage>
             onPressed: emptyTextFormField,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50.0),
+            borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide(
               width: 0,
               style: BorderStyle.none,
@@ -68,11 +70,11 @@ class _SearchPageState extends State<SearchPage>
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            Image.asset(
-              'assets/images/shrug.jpg',
-              height: 200,
-              width: 200,
-            ),
+            // Image.asset(
+            //   'assets/images/shrug.jpg',
+            //   height: 200,
+            //   width: 200,
+            // ),
             Icon(
               Icons.group,
               color: Colors.grey,
@@ -82,7 +84,7 @@ class _SearchPageState extends State<SearchPage>
               'users',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.grey,
                   fontWeight: FontWeight.w500,
                   fontSize: 50.0),
             )
@@ -113,10 +115,11 @@ class _SearchPageState extends State<SearchPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: searchPageHeader(),
-        body: futureSearchResults == null
-            ? displayNoSearchResultsfound()
-            : displayUserFoundScreen());
+      appBar: searchPageHeader(),
+      body: futureSearchResults == null
+          ? displayNoSearchResultsfound()
+          : displayUserFoundScreen(),
+    );
   }
 }
 
@@ -124,11 +127,11 @@ class UserResult extends StatelessWidget {
   final User eachUser;
   UserResult(this.eachUser);
 
-  void showSnackBar(BuildContext context) {
-    SnackBar snackBar = SnackBar(content: Text('NYENYE NYENYE BUBU'));
-    Scaffold.of(context).showSnackBar(snackBar);
-    //  var snackBar = SnackBar(content: Text("data"),);
-  }
+  // void showSnackBar(BuildContext context) {
+  //   SnackBar snackBar = SnackBar(content: Text('NYENYE NYENYE BUBU'));
+  //   Scaffold.of(context).showSnackBar(snackBar);
+  //   //  var snackBar = SnackBar(content: Text("data"),);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +142,8 @@ class UserResult extends StatelessWidget {
         child: Column(
           children: <Widget>[
             GestureDetector(
-              onTap: () => showSnackBar(context),
+              onTap: () =>
+                  displayUserProfile(context, userProfileId: eachUser.id),
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.black,
@@ -152,15 +156,30 @@ class UserResult extends StatelessWidget {
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text(
-                  eachUser.username,
-                  style: TextStyle(color: Colors.white, fontSize: 13.0),
-                ),
+                subtitle: eachUser.username == null
+                    ? Text(
+                        'username_null',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        eachUser.username,
+                        style: TextStyle(color: Colors.white, fontSize: 13.0),
+                      ),
               ),
             )
           ],
         ),
       ),
     );
+  }
+
+  displayUserProfile(BuildContext context, {String userProfileId}) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfilePage(userProfileId: userProfileId),
+        ));
   }
 }

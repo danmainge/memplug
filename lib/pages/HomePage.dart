@@ -21,6 +21,8 @@ final DateTime timestamp = DateTime.now();
 final postsReference = Firestore.instance.collection('posts');
 final commentsReference = Firestore.instance.collection('comments');
 final activityFeedReference = Firestore.instance.collection('feed');
+final followingReference = Firestore.instance.collection('following');
+final followersReference = Firestore.instance.collection('followers');
 User currentUser;
 
 class HomePage extends StatefulWidget {
@@ -36,8 +38,9 @@ class _HomePageState extends State<HomePage> {
   int colorIndex = 0;
 
   void initState() {
-    pageController = PageController();
     super.initState();
+    pageController = PageController();
+
     gSignIn.onCurrentUserChanged.listen((gSigninAccount) {
       controlSignIn(gSigninAccount);
     }, onError: (gError) {
@@ -108,7 +111,8 @@ class _HomePageState extends State<HomePage> {
     pageController.animateToPage(
       pageIndex,
       duration: Duration(milliseconds: 1),
-      curve: Curves.bounceInOut,
+      curve: Curves.easeIn,
+      // curve: Curves.bounceInOut,
     );
   }
 
@@ -177,7 +181,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.person, size: 27.0),
               title: Text(
-                'person',
+                'profile',
                 style: TextStyle(
                   color: colorIndex == 4 ? kButtonColor : kGreyColor,
                 ),

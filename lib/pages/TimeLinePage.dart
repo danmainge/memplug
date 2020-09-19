@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memeplug/pages/EditProfilePage.dart';
+import 'package:memeplug/pages/NotificationsPage.dart';
 import 'package:memeplug/widgets/dart/HeaderWidget.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
 
@@ -20,7 +21,7 @@ class _TimeLinePageState extends State<TimeLinePage> {
           FlatButton.icon(
               color: Colors.amber,
               onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EditProfilePage())),
+                  MaterialPageRoute(builder: (context) => NotificationsPage())),
               icon: Icon(Icons.backup),
               label: Text('yes'))
         ]));

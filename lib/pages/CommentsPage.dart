@@ -102,7 +102,9 @@ class CommentsPageState extends State<CommentsPage> {
                     trailing: OutlineButton.icon(
                       onPressed: addComment,
                       color: kButtonColor,
-                      icon: Icon(Icons.add_comment),
+                      icon: Icon(
+                        Icons.add_comment,
+                      ),
                       label: Text(
                         'publish',
                         style: TextStyle(color: Colors.black),

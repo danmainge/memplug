@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:memeplug/pages/HomePage.dart';
 import 'package:memeplug/widgets/constants.dart';
+import 'package:memeplug/widgets/dart/splashScreenWidget.dart';
+import 'package:splashscreen/splashscreen.dart';
+import 'dart:async';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

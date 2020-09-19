@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:memeplug/widgets/constants.dart';
 import 'package:memeplug/widgets/dart/HeaderWidget.dart';
 import 'package:memeplug/widgets/dart/ProgressWidget.dart';
@@ -15,18 +16,20 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String username;
-  // bool loadingScreen = false;
-  submitusername() {
+  bool loadingScreen = false;
+  submitUsername() {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      // setState(() {
-      //   loadingScreen = true;
-      // });
+      setState(() {
+        loadingScreen = true;
+      });
       SnackBar snackBar = SnackBar(content: Text('welcome ' + username));
       _scaffoldKey.currentState.showSnackBar(snackBar);
       Timer(Duration(seconds: 4), () {
-        // bool loadingScreen = false;
+        setState(() {
+          loadingScreen = false;
+        });
         Navigator.pop(context, username);
       });
     }
@@ -34,23 +37,19 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // loadingScreen
-        //     ? KSpinner()
-        //     :
-        Scaffold(
-      key: _scaffoldKey,
-      appBar: header(context, strTitle: 'Settings', disappearBackButton: true),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            child: Column(
+    return loadingScreen
+        ? KSpinner()
+        : Scaffold(
+            key: _scaffoldKey,
+            appBar: header(context,
+                strTitle: 'Settings', disappearBackButton: true),
+            body: ListView(
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 26.0),
                   child: Center(
                     child: Text(
-                      'set up username',
+                      'Set up username',
                       style: TextStyle(fontSize: 26.0),
                     ),
                   ),
@@ -62,7 +61,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       key: _formKey,
                       autovalidate: true,
                       child: TextFormField(
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.white),
                         validator: (val) {
                           if (val.trim().length < 5 || val.isEmpty) {
                             return 'username is too short';
@@ -73,15 +72,29 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           }
                         },
                         onSaved: (val) => username = val,
-                        decoration: kInputDecoration.copyWith(
-                            hintText: 'your royal memelord',
-                            labelText: 'username',
-                            labelStyle:
-                                TextStyle(fontSize: 16.0, color: kGreyColor),
-                            fillColor: Colors.white.withOpacity(0.4),
+                        decoration: InputDecoration(
+                            hintText: 'username',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            fillColor: Colors.black.withOpacity(0.4),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
                             errorBorder: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(color: kButtonColor))),
+                                borderRadius: BorderRadius.circular(30.0))),
+
+                        // kInputDecoration.copyWith(
+                        //     hintText: 'your royal memelord',
+                        //     labelText: 'username',
+                        //     labelStyle:
+                        //         TextStyle(fontSize: 16.0, color: kGreyColor),
+                        //     fillColor: Colors.white.withOpacity(0.4),
+                        //     errorBorder: UnderlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(30.0),
+                        //         borderSide: BorderSide(color: kButtonColor),
+                        //         ),
+                        //         ),
                       ),
                     ),
                   ),
@@ -91,9 +104,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   child: RaisedButton(
                     color: kButtonColor,
                     elevation: 5.0,
-                    padding: EdgeInsets.all(15.0),
+                    padding: EdgeInsets.only(top: 5.0),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: Text(
                       'submit',
@@ -103,15 +116,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
-                      submitusername();
+                      submitUsername();
                     },
                   ),
                 ),
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
   }
 }

@@ -76,7 +76,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         title: Text(
           'Edit Profile',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         actions: <Widget>[
