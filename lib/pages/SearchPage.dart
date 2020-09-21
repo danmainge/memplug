@@ -22,7 +22,7 @@ class _SearchPageState extends State<SearchPage>
 
   controlSearching(String str) {
     Future<QuerySnapshot> allUsers = usersReference
-        .where('profileName', isGreaterThanOrEqualTo: str)
+        .where('username', isGreaterThanOrEqualTo: str)
         .getDocuments();
     setState(() {
       futureSearchResults = allUsers;

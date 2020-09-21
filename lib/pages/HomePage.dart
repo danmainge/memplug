@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +20,15 @@ final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection('Users');
 final StorageReference storageReference =
     FirebaseStorage.instance.ref().child('Posts Pictures');
-final DateTime timestamp = DateTime.now();
+
 final postsReference = Firestore.instance.collection('posts');
 final commentsReference = Firestore.instance.collection('comments');
 final activityFeedReference = Firestore.instance.collection('feed');
 final followingReference = Firestore.instance.collection('following');
 final followersReference = Firestore.instance.collection('followers');
+final timelineReference = Firestore.instance.collection('timeline');
+
+final DateTime timestamp = DateTime.now();
 User currentUser;
 
 class HomePage extends StatefulWidget {
@@ -36,6 +42,8 @@ class _HomePageState extends State<HomePage> {
   int getPageIndex = 0;
   bool klabelNavigationColor = false;
   int colorIndex = 0;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void initState() {
     super.initState();
@@ -59,11 +67,49 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         isSignedIn = true;
       });
+      configureRealTimePushNotification();
     } else {
       setState(() {
         isSignedIn = false;
       });
     }
+  }
+
+  configureRealTimePushNotification() {
+    final GoogleSignInAccount gUser = gSignIn.currentUser;
+    if (Platform.isIOS) {
+      getIOSpermissions();
+      _firebaseMessaging.getToken().then((token) {
+        usersReference
+            .document(gUser.id)
+            .updateData({'androidNotificationToken': token});
+      });
+      // _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
+      //   print('settings registered: $settings');
+      // });
+      _firebaseMessaging.configure(onMessage: (Map<String, dynamic> msg) async {
+        final String recipientId = msg['data']['recipient'];
+        final String body = msg['notification']['body'];
+        if (recipientId == gUser.id) {
+          SnackBar snackBar = SnackBar(
+              backgroundColor: Colors.grey,
+              content: Text(body,
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis));
+          _scaffoldKey.currentState.showSnackBar(snackBar);
+        }
+      });
+    }
+  }
+
+  getIOSpermissions() {
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(alert: true, badge: true, sound: true));
+    _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
+      print('Settings Registered: $settings');
+    });
   }
 
   userSaveInfoToFireStore() async {
@@ -82,6 +128,11 @@ class _HomePageState extends State<HomePage> {
         'bio': "",
         'timestamp': timestamp,
       });
+      await followersReference
+          .document(gCurrentUser.id)
+          .collection('usersFollowers')
+          .document(gCurrentUser.id)
+          .setData({});
       documentSnapshot = await usersReference.document(gCurrentUser.id).get();
     }
     currentUser = User.fromDocument(documentSnapshot);
@@ -118,16 +169,17 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildHomeScreen() {
     return Scaffold(
+      key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
-          RaisedButton.icon(
-              onPressed: logOutUser,
-              icon: Icon(Icons.close),
-              label: Text(
-                'sign out',
-                style: TextStyle(fontFamily: 'SFProText'),
-              )),
-          // TimeLinePage(),
+          // RaisedButton.icon(
+          //     onPressed: logOutUser,
+          //     icon: Icon(Icons.close),
+          //     label: Text(
+          //       'sign out',
+          //       style: TextStyle(fontFamily: 'SFProText'),
+          //     )),
+          TimeLinePage(gCurrentUser: currentUser),
           SearchPage(),
           UploadPage(
             gCurrentUser: currentUser,
